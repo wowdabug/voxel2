@@ -8,19 +8,18 @@ export function initCamera() {
 
         x: 0,
         y: 0,
-        zoom: 2
+        zoom: 2,
+        renderDistance: 16
     };
 }
 
 function update(deltaTime) {
-    const speed = 0.005;
+    const speed = 0.001;
 
     moveCamera(
         (game.player.x - game.camera.x) * speed * deltaTime,
         (game.player.y - game.camera.y) * speed * deltaTime
     );
-
-    debug.logOnce("cam", `${game.camera.x}, ${game.camera.y}`);
 }
 
 function moveCamera(x, y) {

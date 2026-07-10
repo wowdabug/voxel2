@@ -31,10 +31,10 @@ function update() {
 }
 
 function render() {
-    const renderDistance = 16;
+    const renderDistance = game.camera.renderDistance;
 
-    const camX = Math.floor(game.camera.x / 16);
-    const camY = Math.floor(game.camera.y / 16);
+    const camX = Math.round((game.camera.x + 1) / 16);
+    const camY = Math.round((game.camera.y + 1) / 16);
 
     const startX = camX - Math.floor(renderDistance / 2);
     const startY = camY - Math.floor(renderDistance / 2);
@@ -79,10 +79,6 @@ function render() {
             );
         }
     }
-}
-
-function renderVoid() {
-
 }
 
 function generate() {
