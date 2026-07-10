@@ -1,13 +1,15 @@
 import { game } from "./main.js";
 
 export function initCamera() {
-    game.camera = {
+    return {
+        update,
+
         x: 0,
         y: 0
     };
 }
 
-export function updateCamera(deltaTime) {
+function update(deltaTime) {
     const speed = 0.1;
 
     moveCamera(

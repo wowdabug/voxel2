@@ -1,34 +1,36 @@
 import { game } from "./main.js";
-import { isKeyDown, isKeyDownOnce } from "./input.js";
 
 export function initPlayer() {
-    game.player = {
-        x: 0,
-        y: 0
+    return {
+        update,
+        render,
+
+        x: 128,
+        y: 128
     };
 }
 
-export function updatePlayer(deltaTime) {
+export function update(deltaTime) {
     const speed = 0.1;
 
-    if (isKeyDown("KeyW")) {
-        movePlayer(0, -speed * deltaTime);
+    if (game.input.isKeyDown("KeyW")) {
+        move(0, -speed * deltaTime);
     }
     
-    if (isKeyDown("KeyA")) {
-        movePlayer(-speed * deltaTime, 0);
+    if (game.input.isKeyDown("KeyA")) {
+        move(-speed * deltaTime, 0);
     }
 
-    if (isKeyDown("KeyS")) {
-        movePlayer(0, speed * deltaTime);
+    if (game.input.isKeyDown("KeyS")) {
+        move(0, speed * deltaTime);
     }
 
-    if (isKeyDown("KeyD")) {
-        movePlayer(speed * deltaTime, 0);
+    if (game.input.isKeyDown("KeyD")) {
+        move(speed * deltaTime, 0);
     }
 }
 
-export function renderPlayer() {
+export function render() {
     const size = 10;
 
     game.ctx.fillRect(
@@ -39,7 +41,7 @@ export function renderPlayer() {
     );
 }
 
-function movePlayer(x, y) {
+function move(x, y) {
     game.player.x += x;
     game.player.y += y;
 }

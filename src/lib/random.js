@@ -67,3 +67,11 @@ export function getRandomIntInclusive(min, max) {
     const maxFloored = Math.floor(max);
     return Math.floor(prng() * (maxFloored - minCeiled + 1) + minCeiled);
 }
+
+export const random = {
+    getPRNG,
+    seedPRNG,
+    getRandomArbitrary,
+    getRandomInt,
+    getRandomIntInclusive
+};

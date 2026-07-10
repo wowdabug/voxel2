@@ -1,35 +1,42 @@
 import { game } from "./main.js";
-import { tiles, numberOfTiles } from "./tile.js";
-import { getPRNG, getRandomInt } from "./lib/random.js";
+import { random } from "./lib/random.js";
 
 const g_tileMap = new Image();
-
-const g_levelWidth = 256;
-const g_levelHeight = 256;
 
 export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
 
-    game.level = {
-        tiles: new Uint8Array(g_levelWidth * g_levelHeight),
+    const width = 256;
+    const height = 256;
+
+    const area = width * height;
+
+    return {
+        update,
+        render,
+        generate,
+
+        width,
+        height,
+        area,
+
+        tileIds: new Uint8Array(area),
         seed: null
     };
-
-    generateLevel();
 }
 
-export function updateLevel() {
+function update() {
 
 }
 
-export function renderLevel() {
+function render() {
     let index = 0;
     for (let y = 0; y < 16; y++) {
         for (let x = 0; x < 16; x++) {
             game.ctx.drawImage(
 				g_tileMap,
-				game.level.tiles[index] % 16 * 16,
-				Math.floor(game.level.tiles[index] / 16) * 16,
+				game.level.tileIds[index] % 16 * 16,
+				Math.floor(game.level.tileIds[index] / 16) * 16,
 				16,
 				16, 
 				x * 16, 
@@ -42,11 +49,11 @@ export function renderLevel() {
     }
 }
 
-function generateLevel() {
+function generate() {
     game.level.seed = (Math.random() * 2 ** 32) >>> 0;
-    const prng = getPRNG();
-    for (let i = 0; i < g_levelWidth * g_levelHeight; ++i) {
+    const prng = random.getPRNG();
+    for (let i = 0; i < game.level.area; ++i) {
         //game.level.tiles[i] = tiles.stone;
-        game.level.tiles[i] = getRandomInt(prng, 0, numberOfTiles);
+        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.numberOfIds);
     }
 }
