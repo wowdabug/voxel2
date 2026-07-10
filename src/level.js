@@ -1,5 +1,6 @@
 import { game } from "./main.js";
 import { random } from "./lib/random.js";
+import { debug } from "./lib/debug.js";
 
 const g_tileMap = new Image();
 
@@ -32,33 +33,64 @@ function update() {
 function render() {
     const renderDistance = 16;
 
-    const startY = Math.floor((game.camera.y / 16) - (renderDistance / 2));
-    const startX = Math.floor((game.camera.x / 16) - (renderDistance / 2));
+    const camX = Math.floor(game.camera.x / 16);
+    const camY = Math.floor(game.camera.y / 16);
 
-    let index = 0;
-    for (let y = startY; y < startY + renderDistance; ++y) {
-        for (let x = startX; x < startX + renderDistance; ++x) {
-            const tileIndex = game.tiles.indices[game.level.tileIds[index]];
+    const startX = camX - Math.floor(renderDistance / 2);
+    const startY = camY - Math.floor(renderDistance / 2);
+    
+    for (let y = 0; y < renderDistance; ++y) {
+        const mapY = startY + y;
+
+        if (mapY < 0 || mapY >= game.level.height) {
+            continue;
+        }
+
+        for (let x = 0; x < renderDistance; ++x) {
+            const mapX = startX + x;
+
+            if (mapX < 0 || mapX >= game.level.width) {
+                continue;
+            }
+
+            const tile = mapY * game.level.width + mapX;
+            const tileId = game.level.tileIds[tile];
+            const tileIndex = game.tiles.indices[tileId];
+
+            const worldX = mapX * 16;
+            const worldY = mapY * 16;
+
+            const screenX = (worldX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
+            const screenY = (worldY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
+
+            const padding = 1;
+            
             game.ctx.imageSmoothingEnabled = false;
             game.ctx.drawImage(
-				g_tileMap,
-				tileIndex % 16 * 16,
-				Math.floor(tileIndex / 16) * 16,
-				16,
-				16, 
-				x * game.camera.zoom * 16, 
-				y * game.camera.zoom * 16, 
-				game.camera.zoom * 16, 
-				game.camera.zoom * 16
-			);
-			++index;
-		}
+                g_tileMap,
+                (tileIndex % 16) * 16,
+                Math.floor(tileIndex / 16) * 16,
+                16,
+                16, 
+                screenX, 
+                screenY, 
+                game.camera.zoom * 16 + padding, 
+                game.camera.zoom * 16 + padding
+            );
+        }
     }
 }
 
+function renderVoid() {
+
+}
+
 function generate() {
-    game.level.seed = (Math.random() * 2 ** 32) >>> 0;
-    const prng = random.getPRNG();
+    const seed = (Math.random() * 2 ** 32) >>> 0;
+    const prng = random.getPRNG(seed);
+    
+    game.level.seed = seed;
+
     for (let i = 0; i < game.level.area; ++i) {
         //game.level.tiles[i] = tiles.stone;
         game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.numberOfIds);

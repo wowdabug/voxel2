@@ -9,8 +9,8 @@ export function initPlayer() {
         update,
         render,
 
-        x: 128,
-        y: 128
+        x: 32,
+        y: 32
     };
 }
 
@@ -35,26 +35,21 @@ export function update(deltaTime) {
 }
 
 export function render() {
-    const size = 10;
-
-    game.ctx.fillRect(
-        128 * game.camera.zoom - (size / 2),
-        128 * game.camera.zoom - (size / 2),
-        size, 
-        size
-    );
+    const relativeX = game.player.x - game.camera.x - 8;
+    const relativeY = game.player.y - game.camera.y - 8;
 
     const id = 0;
-    const padding = 1;
+    const padding = -1;
+
     game.ctx.imageSmoothingEnabled = false;
     game.ctx.drawImage(
         g_entityMap,
-        id % 16 * 16 + padding,
-        Math.floor(id / 16) * 16 + padding,
-        16 - (padding * 2),
-        16 - (padding * 2), 
-        (game.player.x - 8) * game.camera.zoom, 
-        (game.player.y - 8) * game.camera.zoom, 
+        id % 16 * 16 - padding,
+        Math.floor(id / 16) * 16 - padding,
+        16 + (padding * 2),
+        16 + (padding * 2), 
+        (relativeX * game.camera.zoom) + (game.canvas.width / 2), 
+        (relativeY * game.camera.zoom) + (game.canvas.height / 2), 
         game.camera.zoom * 16, 
         game.camera.zoom * 16
     );
