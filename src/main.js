@@ -19,6 +19,7 @@ function init() {
     game.ctx = canvas.getContext("2d");
 
     initInput();
+    initLevel();
     initCamera();
     initPlayer();
 }
