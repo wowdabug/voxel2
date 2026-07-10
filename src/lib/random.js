@@ -23,7 +23,7 @@ function splitmix32(a) {
     }
 }
 
-export function getPRNG(seed) {
+function getPRNG(seed) {
     switch (g_currentPRNG) {
         case g_prngs.mulberry32:
             return mulberry32(seed);
@@ -37,7 +37,7 @@ export function getPRNG(seed) {
     }
 }
 
-export function seedPRNG(prng, seed) {
+function seedPRNG(prng, seed) {
     switch (g_currentPRNG) {
         case g_prngs.mulberry32:
             prng = mulberry32(seed);
@@ -52,17 +52,17 @@ export function seedPRNG(prng, seed) {
     }
 }
 
-export function getRandomArbitrary(prng, min, max) {
+function getRandomArbitrary(prng, min, max) {
     return prng() * (max - min) + min;
 }
 
-export function getRandomInt(prng, min, max) {
+function getRandomInt(prng, min, max) {
     const minCeiled = Math.ceil(min);
     const maxFloored = Math.floor(max);
     return Math.floor(prng() * (maxFloored - minCeiled) + minCeiled);
 }
 
-export function getRandomIntInclusive(min, max) {
+function getRandomIntInclusive(min, max) {
     const minCeiled = Math.ceil(min);
     const maxFloored = Math.floor(max);
     return Math.floor(prng() * (maxFloored - minCeiled + 1) + minCeiled);

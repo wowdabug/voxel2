@@ -6,8 +6,8 @@ const g_tileMap = new Image();
 export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
 
-    const width = 16;
-    const height = 16;
+    const width = 32;
+    const height = 32;
 
     const area = width * height;
 
@@ -32,9 +32,12 @@ function update() {
 function render() {
     const renderDistance = 16;
 
+    const startY = Math.floor((game.camera.y / 16) - (renderDistance / 2));
+    const startX = Math.floor((game.camera.x / 16) - (renderDistance / 2));
+
     let index = 0;
-    for (let y = 0; y < renderDistance; y++) {
-        for (let x = 0; x < renderDistance; x++) {
+    for (let y = startY; y < startY + renderDistance; ++y) {
+        for (let x = startX; x < startX + renderDistance; ++x) {
             const tileIndex = game.tiles.indices[game.level.tileIds[index]];
             game.ctx.imageSmoothingEnabled = false;
             game.ctx.drawImage(

@@ -1,5 +1,7 @@
 import { game } from "./main.js";
 
+import { debug } from "./lib/debug.js";
+
 export function initCamera() {
     return {
         update,
@@ -11,12 +13,14 @@ export function initCamera() {
 }
 
 function update(deltaTime) {
-    const speed = 0.1;
+    const speed = 0.001;
 
     moveCamera(
         (game.player.x - game.camera.x) * speed * deltaTime,
         (game.player.y - game.camera.y) * speed * deltaTime
     );
+
+    debug.logOnce("cam", `${game.camera.x}, ${game.camera.y}`);
 }
 
 function moveCamera(x, y) {

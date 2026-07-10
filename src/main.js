@@ -31,7 +31,7 @@ function init() {
 
 function update(deltaTime) {
     game.level.update();
-    game.camera.update();
+    game.camera.update(deltaTime);
     game.player.update(deltaTime);
 }
 

@@ -38,8 +38,8 @@ export function render() {
     const size = 10;
 
     game.ctx.fillRect(
-        game.player.x * game.camera.zoom - (size / 2),
-        game.player.y * game.camera.zoom - (size / 2),
+        128 * game.camera.zoom - (size / 2),
+        128 * game.camera.zoom - (size / 2),
         size, 
         size
     );
