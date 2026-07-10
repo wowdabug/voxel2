@@ -1,6 +1,10 @@
 import { game } from "./main.js";
 
+const g_entityMap = new Image();
+
 export function initPlayer() {
+    g_entityMap.src = "src/assets/entities.png";
+
     return {
         update,
         render,
@@ -34,10 +38,25 @@ export function render() {
     const size = 10;
 
     game.ctx.fillRect(
-        game.player.x - (size / 2),
-        game.player.y - (size / 2),
+        game.player.x * game.camera.zoom - (size / 2),
+        game.player.y * game.camera.zoom - (size / 2),
         size, 
         size
+    );
+
+    const id = 0;
+    const padding = 1;
+    game.ctx.imageSmoothingEnabled = false;
+    game.ctx.drawImage(
+        g_entityMap,
+        id % 16 * 16 + padding,
+        Math.floor(id / 16) * 16 + padding,
+        16 - (padding * 2),
+        16 - (padding * 2), 
+        (game.player.x - 8) * game.camera.zoom, 
+        (game.player.y - 8) * game.camera.zoom, 
+        game.camera.zoom * 16, 
+        game.camera.zoom * 16
     );
 }
 

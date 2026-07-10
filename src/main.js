@@ -20,8 +20,6 @@ function init() {
     game.canvas = document.getElementById("canvas");
     game.ctx = canvas.getContext("2d");
 
-    game.ctx.imageSmoothingEnabled = false;
-
     game.input = initInput();
     game.tiles = initTiles();
     game.level = initLevel();
