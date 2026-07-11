@@ -97,7 +97,6 @@ function frame(frameTime) {
     }
 }
 
-
 init();
 
 requestAnimationFrame((timestamp) => {

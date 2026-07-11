@@ -89,6 +89,6 @@ function generate() {
 
     for (let i = 0; i < game.level.area; ++i) {
         //game.level.tiles[i] = tiles.stone;
-        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.numberOfIds);
+        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
     }
 }

@@ -1,39 +1,27 @@
 import { game } from "./main.js";
 
-function updateStone() {
-
-}
-
-const stone = {
-    id: 0,
-    index: 1,
-    name: "stone",
-    update: updateStone
-};
-
 export function initTiles() {
-    const ids = Object.freeze({
-        stone: 0,
-        dirt: 1,
-        grass: 2
-    });
+    const tiles = [
+        {
+            id: 0,
+            index: 1,
+            name: "stone",
+        },
+        {
+            id: 1,
+            index: 4,
+            name: "dirt",
+        },
+        {
+            id: 2,
+            index: 0,
+            name: "grass"
+        }
+    ];
 
-    const numberOfIds = Object.keys(ids).length;
-
-    const indices = [];
-    indices[ids.stone] = 1;
-    indices[ids.dirt] = 4;
-    indices[ids.grass] = 0;
-
-    const names = [];
-    names[ids.stone] = "stone";
-    names[ids.dirt] = "dirt";
-    names[ids.grass] = "grass";
-
-    for (let i = 0; i < numberOfIds; ++i)  {
-        if (indices[i] == null) console.error(`no index for id ${i}`);
-        if (names[i] == null) console.error(`no name for id ${i}`);
-    }
+    const ids = tiles.map(x => x.id);
+    const indices = tiles.map(x => x.index);
+    const names = tiles.map(x => x.name);
 
     return {
         getIndex,
@@ -42,8 +30,8 @@ export function initTiles() {
         getIdsFromName,
 
         ids,
-        numberOfIds,
-        indices
+        indices,
+        names
     };
 }
 
@@ -74,6 +62,3 @@ function getIdsFromName(name) {
     }
     return matchingIds;
 }
-
-
-
