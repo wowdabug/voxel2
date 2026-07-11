@@ -47,7 +47,7 @@ export function update(deltaTime) {
         game.level.setTile(
             game.player.selectedTileX,
             game.player.selectedTileY,
-            game.tiles.clay
+            game.tiles.wood
         );
     }
 }

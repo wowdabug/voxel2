@@ -31,6 +31,11 @@ export function initTiles() {
             id: 5,
             index: 10,
             name: "clay"
+        },
+        {
+            id: 6,
+            index: 2,
+            name: "wood"
         }
     ];
 
@@ -45,6 +50,7 @@ export function initTiles() {
         grass: 3,
         sand: 4,
         clay: 5,
+        wood: 6,
 
         getIndex,
         getName,

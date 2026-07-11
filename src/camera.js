@@ -8,7 +8,7 @@ export function initCamera() {
         x: 0,
         y: 0,
         zoom: 2,
-        renderDistance: 16
+        renderDistance: 32
     };
 }
 
