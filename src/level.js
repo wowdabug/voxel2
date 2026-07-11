@@ -88,57 +88,78 @@ function render() {
 
 function generate() {
     const types = Object.freeze({
-        flat: 0,
-        random: 1,
-        noise: 2
+        void: 0,
+        flat: 1,
+        random: 2,
+        noise: 3
     });
 
-    const scale = 0.1;
     const type = types.noise;
 
     game.level.seed = random.getSeed();
 
-    let prng;
-    if (type == types.random) {
-        prng = random.getPRNG(game.level.seed);
+    switch (type) {
+        case types.void:
+            generateVoid();
+            break;
+        case types.flat:
+            generateFlat();
+            break;
+        case types.random:
+            generateRandom();
+            break;
+        case types.noise:
+            generateNoise();
+            break;
+        default:
+            throw new Error("invalid type provided");
     }
+}
 
-    if (type == types.noise) {
-        noise.seed(game.level.seed);
+function generateVoid() {
+    for (let i = 0; i < game.level.area; ++i) {
+        game.level.tileIds[i] = game.tiles.void;
     }
+}
+
+function generateFlat() {
+    for (let i = 0; i < game.level.area; ++i) {
+        game.level.tileIds[i] = game.tiles.grass;
+    }
+}
+
+function generateRandom() {
+    const prng = random.getPRNG(game.level.seed);
+
+    for (let i = 0; i < game.level.area; ++i) {
+        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
+    }
+}
+
+function generateNoise() {
+    const prng = random.getPRNG(game.level.seed);
+    const scale = 0.1;
+
+    noise.seed(game.level.seed);
 
     let i = 0;
     for (let y = 0; y < game.level.height; ++y) {
         for (let x = 0; x < game.level.width; ++x) {
-            switch (type) {
-                case types.flat:
-                    game.level.tileIds[i] = game.tiles.grass;
-                    break;
-                case types.random:
-                    game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
-                    break;
-                case types.noise:
-                    const n = (noise.perlin2(x * scale, y * scale) + 1) / 2;
-                    if (n > 0.6) {
-                        game.level.tileIds[i] = game.tiles.stone;
-                    } else if (n > 0.4) {
-                        game.level.tileIds[i] = game.tiles.grass;
-                    } else {
-                        game.level.tileIds[i] = game.tiles.sand;
-                    }
-                    break;
-                default:
-                    game.level.tileIds[i] = game.tiles.void;
-                    console.error("no valid type provided");
+            const n = (noise.perlin2(x * scale, y * scale) + 1) / 2;
+            if (n > 0.6) {
+                game.level.tileIds[i] = game.tiles.stone;
+            } else if (n > 0.4) {
+                game.level.tileIds[i] = game.tiles.grass;
+            } else {
+                game.level.tileIds[i] = game.tiles.sand;
             }
-
+            for (let j = 0; j < 5; ++j) {
+                const randomX = random.getRandomInt(prng, 0, game.level.width);
+                const randomY = random.getRandomInt(prng, 0, game.level.height);
+            }
             ++i;
         }
     }
-}
-
-function generateDungeon() {
-
 }
 
 function setTile(x, y, id) {
