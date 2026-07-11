@@ -14,6 +14,7 @@ export function render(deltaTime) {
 
     if (debugEnabled) {
         const fontSize = 12;
+
         const debug = [
             `px: ${game.player.x.toFixed(1)}`,
             `py: ${game.player.y.toFixed(1)}`,
@@ -21,7 +22,12 @@ export function render(deltaTime) {
             `py: ${game.camera.y.toFixed(1)}`,
             "",
             `ft: ${game.gui.frameTime.toFixed(1)}`,
-            `fps: ${game.gui.framesPerSecond.toFixed(1)}`
+            `fps: ${game.gui.framesPerSecond.toFixed(1)}`,
+            "",
+            `mx: ${game.input.mouseX}`,
+            `my: ${game.input.mouseY}`,
+            "",
+            `rd: ${game.camera.renderDistance}`
         ];
 
         game.ctx.font = `${fontSize}px sans-serif`;

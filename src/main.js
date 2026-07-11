@@ -5,17 +5,18 @@ import { initLevel } from "./level.js";
 import { initCamera } from "./camera.js";
 import { initPlayer } from "./player.js";
 
-import { debug } from "./lib/debug.js";
+import { random } from "./lib/random.js";
 
 export const game = {
+    prng: null,
     canvas: null,
     ctx: null,
     gui: null,
     input: null,
     tiles: null,
     level: null,
-    camera: null,
-    player: null
+    player: null,
+    camera: null
 };
 
 let g_lastTime;
@@ -24,14 +25,21 @@ function init() {
     game.canvas = document.getElementById("canvas");
     game.ctx = canvas.getContext("2d");
 
+    game.prng = random.getPrng();
+
     game.gui = initGui();
     game.input = initInput();
     game.tiles = initTiles();
     game.level = initLevel();
-    game.camera = initCamera();
     game.player = initPlayer();
+    game.camera = initCamera();
 
     game.level.generate();
+    game.player.spawn(256, 256);
+
+    const camX = random.getRandomInt(game.prng, 0, game.level.width * 16);
+    const camY = random.getRandomInt(game.prng, 0, game.level.height * 16);
+    game.camera.spawn(camX, camY);
 }
 
 function update(deltaTime) {

@@ -2,17 +2,17 @@ import { game } from "./main.js";
 import { random } from "./lib/random.js";
 
 const g_entityMap = new Image();
-const g_prng = random.getPRNG();
 
 export function initPlayer() {
     g_entityMap.src = "src/assets/entities.png";
-    
+
     return {
         update,
         render,
+        spawn,
 
-        x: 32,
-        y: 32
+        x: 0,
+        y: 0
     };
 }
 
@@ -35,11 +35,17 @@ export function update(deltaTime) {
         move(speed * deltaTime, 0);
     }
 
-    if (game.input.isMouseDownOnce()) {
-        const randomX = random.getRandomInt(g_prng, 0, game.level.width);
-        const randomY = random.getRandomInt(g_prng, 0, game.level.height);
-        const id = game.tiles.stone;
-        game.level.setTile(randomX, randomY, id);
+    if (game.input.isMouseDown()) {
+        // const randomX = random.getRandomInt(game.prng, 0, game.level.width);
+        // const randomY = random.getRandomInt(game.prng, 0, game.level.height);
+
+        const pixelX = (game.input.mouseX - game.canvas.width / 2) / game.camera.zoom + game.camera.x;
+        const pixelY = (game.input.mouseY - game.canvas.height / 2) / game.camera.zoom + game.camera.y;
+
+        const tileX = Math.floor(pixelX / 16)
+        const tileY = Math.floor(pixelY / 16)
+        
+        game.level.setTile(tileX, tileY, game.tiles.clay);
     }
 }
 
@@ -67,4 +73,9 @@ export function render() {
 function move(x, y) {
     game.player.x += x;
     game.player.y += y;
+}
+
+function spawn(x, y) {
+    game.player.x = x;
+    game.player.y = y;
 }

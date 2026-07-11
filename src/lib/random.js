@@ -3,7 +3,7 @@ const g_prngs = Object.freeze({
     splitmix32: 1
 });
 
-const g_currentPRNG = g_prngs.splitmix32;
+const g_currentPrng = g_prngs.splitmix32;
 
 function mulberry32(a) {
     return function() {
@@ -27,8 +27,8 @@ function getSeed() {
     return (Math.random() * 2 ** 32) >>> 0;
 }
 
-function getPRNG(seed = getSeed()) {
-    switch (g_currentPRNG) {
+function getPrng(seed = getSeed()) {
+    switch (g_currentPrng) {
         case g_prngs.mulberry32:
             return mulberry32(seed);
             break;
@@ -41,8 +41,8 @@ function getPRNG(seed = getSeed()) {
     }
 }
 
-function seedPRNG(prng, seed = getSeed()) {
-    switch (g_currentPRNG) {
+function seedPrng(prng, seed = getSeed()) {
+    switch (g_currentPrng) {
         case g_prngs.mulberry32:
             prng = mulberry32(seed);
             break;
@@ -74,8 +74,8 @@ function getRandomIntInclusive(min, max) {
 
 export const random = {
     getSeed,
-    getPRNG,
-    seedPRNG,
+    getPrng,
+    seedPrng,
     getRandomArbitrary,
     getRandomInt,
     getRandomIntInclusive

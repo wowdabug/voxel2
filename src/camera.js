@@ -3,6 +3,7 @@ import { game } from "./main.js";
 export function initCamera() {
     return {
         update,
+        spawn,
 
         x: 0,
         y: 0,
@@ -14,13 +15,18 @@ export function initCamera() {
 function update(deltaTime) {
     const speed = 0.005;
 
-    moveCamera(
+    move(
         (game.player.x - game.camera.x) * speed * deltaTime,
         (game.player.y - game.camera.y) * speed * deltaTime
     );
 }
 
-function moveCamera(x, y) {
+function move(x, y) {
     game.camera.x += x;
     game.camera.y += y;
+}
+
+function spawn(x, y) {
+    game.camera.x = x;
+    game.camera.y = y;
 }

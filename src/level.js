@@ -3,6 +3,7 @@ import noise from "./lib/perlin.js";
 import { random } from "./lib/random.js";
 
 const g_tileMap = new Image();
+const g_prng = random.getPrng();
 
 export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
@@ -129,7 +130,7 @@ function generateFlat() {
 }
 
 function generateRandom() {
-    const prng = random.getPRNG(game.level.seed);
+    const prng = random.getPrng(game.level.seed);
 
     for (let i = 0; i < game.level.area; ++i) {
         game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
@@ -137,7 +138,7 @@ function generateRandom() {
 }
 
 function generateNoise() {
-    const prng = random.getPRNG(game.level.seed);
+    const prng = random.getPrng(game.level.seed);
     const scale = 0.1;
 
     noise.seed(game.level.seed);
@@ -168,6 +169,6 @@ function setTile(x, y, id) {
         y >= 0 ||
         y < game.level.height
     ) {
-        game.level.tileIds[x + (y * game.level.width)] = 1;
+        game.level.tileIds[x + (y * game.level.width)] = id;
     }
 }
