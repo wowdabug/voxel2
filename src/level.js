@@ -1,4 +1,5 @@
 import { game } from "./main.js";
+import noise from "./lib/perlin.js";
 import { random } from "./lib/random.js";
 
 const g_tileMap = new Image();
@@ -81,13 +82,52 @@ function render() {
 }
 
 function generate() {
-    const seed = (Math.random() * 2 ** 32) >>> 0;
-    const prng = random.getPRNG(seed);
-    
-    game.level.seed = seed;
+    const types = Object.freeze({
+        flat: 0,
+        random: 1,
+        noise: 2
+    });
 
-    for (let i = 0; i < game.level.area; ++i) {
-        //game.level.tiles[i] = tiles.stone;
-        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
+    const scale = 0.1;
+    const type = types.noise;
+
+    game.level.seed = (Math.random() * 2 ** 32) >>> 0;
+
+    let prng;
+    if (type == types.random) {
+        prng = random.getPRNG(game.level.seed);
+    }
+
+    if (type == types.noise) {
+        noise.seed(game.level.seed);
+    }
+
+    let i = 0;
+    for (let y = 0; y < game.level.height; ++y) {
+        for (let x = 0; x < game.level.width; ++x) {
+            switch (type) {
+                case types.flat:
+                    game.level.tileIds[i] = game.tiles.grass;
+                    break;
+                case types.random:
+                    game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
+                    break;
+                case types.noise:
+                    const n = (noise.perlin2(x * scale, y * scale) + 1) / 2;
+                    if (n > 0.6) {
+                        game.level.tileIds[i] = game.tiles.stone;
+                    } else if (n > 0.4) {
+                        game.level.tileIds[i] = game.tiles.grass;
+                    } else {
+                        game.level.tileIds[i] = game.tiles.sand;
+                    }
+                    break;
+                default:
+                    game.level.tileIds[i] = game.tiles.void;
+                    console.error("no valid type provided");
+            }
+
+            ++i;
+        }
     }
 }

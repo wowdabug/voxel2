@@ -4,23 +4,33 @@ export function initTiles() {
     const tiles = [
         {
             id: 0,
-            index: 1,
-            name: "stone",
+            index: 0,
+            name: "void",
         },
         {
             id: 1,
+            index: 18,
+            name: "stone",
+        },
+        {
+            id: 2,
             index: 4,
             name: "dirt",
         },
         {
-            id: 2,
-            index: 0,
+            id: 3,
+            index: 1,
             name: "grass"
         },
         {
-            id: 3,
+            id: 4,
             index: 9,
             name: "sand"
+        },
+        {
+            id: 5,
+            index: 10,
+            name: "clay"
         }
     ];
 
@@ -29,6 +39,13 @@ export function initTiles() {
     const names = tiles.map(x => x.name);
 
     return {
+        void: 0,
+        stone: 1,
+        dirt: 2,
+        grass: 3,
+        sand: 4,
+        clay: 5,
+
         getIndex,
         getName,
         getIdsFromIndex,
