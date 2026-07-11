@@ -1,6 +1,5 @@
 import { game } from "./main.js";
 import { random } from "./lib/random.js";
-import { debug } from "./lib/debug.js";
 
 const g_tileMap = new Image();
 

@@ -16,6 +16,11 @@ export function initTiles() {
             id: 2,
             index: 0,
             name: "grass"
+        },
+        {
+            id: 3,
+            index: 9,
+            name: "sand"
         }
     ];
 

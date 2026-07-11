@@ -1,7 +1,5 @@
 import { game } from "./main.js";
 
-import { debug } from "./lib/debug.js";
-
 export function initCamera() {
     return {
         update,
