@@ -23,7 +23,11 @@ function splitmix32(a) {
     }
 }
 
-function getPRNG(seed) {
+function getSeed() {
+    return (Math.random() * 2 ** 32) >>> 0;
+}
+
+function getPRNG(seed = getSeed()) {
     switch (g_currentPRNG) {
         case g_prngs.mulberry32:
             return mulberry32(seed);
@@ -37,7 +41,7 @@ function getPRNG(seed) {
     }
 }
 
-function seedPRNG(prng, seed) {
+function seedPRNG(prng, seed = getSeed()) {
     switch (g_currentPRNG) {
         case g_prngs.mulberry32:
             prng = mulberry32(seed);
@@ -69,6 +73,7 @@ function getRandomIntInclusive(min, max) {
 }
 
 export const random = {
+    getSeed,
     getPRNG,
     seedPRNG,
     getRandomArbitrary,

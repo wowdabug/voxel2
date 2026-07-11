@@ -1,10 +1,12 @@
 import { game } from "./main.js";
+import { random } from "./lib/random.js";
 
 const g_entityMap = new Image();
+const g_prng = random.getPRNG();
 
 export function initPlayer() {
     g_entityMap.src = "src/assets/entities.png";
-
+    
     return {
         update,
         render,
@@ -31,6 +33,13 @@ export function update(deltaTime) {
 
     if (game.input.isKeyDown("KeyD")) {
         move(speed * deltaTime, 0);
+    }
+
+    if (game.input.isMouseDownOnce()) {
+        const randomX = random.getRandomInt(g_prng, 0, game.level.width);
+        const randomY = random.getRandomInt(g_prng, 0, game.level.height);
+        const id = game.tiles.stone;
+        game.level.setTile(randomX, randomY, id);
     }
 }
 

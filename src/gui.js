@@ -13,6 +13,7 @@ export function render(deltaTime) {
     const debugEnabled = true;
 
     if (debugEnabled) {
+        const fontSize = 16;
         const debug = [
             `px: ${game.player.x.toFixed(1)}`,
             `py: ${game.player.y.toFixed(1)}`,
@@ -23,12 +24,13 @@ export function render(deltaTime) {
             `fps: ${game.gui.framesPerSecond.toFixed(1)}`
         ];
 
+        game.ctx.font = `${fontSize}px sans-serif`;
         game.ctx.fillStyle = "white";
 
-        let y = 10;
+        let y = fontSize;
         for (const line of debug) {
             game.ctx.fillText(line, 0, y);
-            y += 10;
+            y += fontSize;
         }
     }
 }

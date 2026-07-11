@@ -29,9 +29,7 @@ export function initLevel() {
 }
 
 function update() {
-    if (game.input.isMouseDownOnce()) {
-        setTile(0, 2, game.tiles.stone);
-    }
+
 }
 
 function render() {
@@ -95,7 +93,7 @@ function generate() {
     const scale = 0.1;
     const type = types.noise;
 
-    game.level.seed = (Math.random() * 2 ** 32) >>> 0;
+    game.level.seed = random.getSeed();
 
     let prng;
     if (type == types.random) {
