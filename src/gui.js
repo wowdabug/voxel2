@@ -13,7 +13,7 @@ export function render(deltaTime) {
     const debugEnabled = true;
 
     if (debugEnabled) {
-        const fontSize = 16;
+        const fontSize = 12;
         const debug = [
             `px: ${game.player.x.toFixed(1)}`,
             `py: ${game.player.y.toFixed(1)}`,
@@ -33,4 +33,6 @@ export function render(deltaTime) {
             y += fontSize;
         }
     }
+
+    
 }

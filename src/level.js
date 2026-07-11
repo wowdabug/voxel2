@@ -32,7 +32,10 @@ function update() {
 
 }
 
+let rotationAngle = 0;
+
 function render() {
+    rotationAngle += 0.01;
     const renderDistance = game.camera.renderDistance;
 
     const camX = Math.round((game.camera.x + 1) / 16);
@@ -132,6 +135,10 @@ function generate() {
             ++i;
         }
     }
+}
+
+function generateDungeon() {
+
 }
 
 function setTile(x, y, id) {
