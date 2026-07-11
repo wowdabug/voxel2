@@ -17,6 +17,8 @@ export function initLevel() {
         render,
         generate,
 
+        setTile,
+
         width,
         height,
         area,
@@ -27,7 +29,9 @@ export function initLevel() {
 }
 
 function update() {
-
+    if (game.input.isMouseDownOnce()) {
+        setTile(0, 2, game.tiles.stone);
+    }
 }
 
 function render() {
@@ -129,5 +133,15 @@ function generate() {
 
             ++i;
         }
+    }
+}
+
+function setTile(x, y, id) {
+    if (x >= 0 || 
+        x < game.level.width ||
+        y >= 0 ||
+        y < game.level.height
+    ) {
+        game.level.tileIds[x + (y * game.level.width)] = 1;
     }
 }

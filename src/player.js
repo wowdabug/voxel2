@@ -9,8 +9,8 @@ export function initPlayer() {
         update,
         render,
 
-        x: 256,
-        y: 256
+        x: 32,
+        y: 32
     };
 }
 
