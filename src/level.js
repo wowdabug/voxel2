@@ -1,15 +1,18 @@
 import { game } from "./main.js";
 import noise from "./lib/perlin.js";
 import { random } from "./lib/random.js";
+import {debug} from "./lib/debug.js";
 
 const g_tileMap = new Image();
+const g_outline = new Image();
 const g_prng = random.getPrng();
 
 export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
+    g_outline.src = "src/assets/outline.png";
 
-    const width = 32;
-    const height = 32;
+    const width = 64;
+    const height = 64;
 
     const area = width * height;
 
@@ -33,10 +36,9 @@ function update() {
 
 }
 
-let rotationAngle = 0;
-
 function render() {
-    rotationAngle += 0.01;
+    const padding = 1;
+    
     const renderDistance = game.camera.renderDistance;
 
     const camX = Math.round((game.camera.x + 1) / 16);
@@ -46,30 +48,28 @@ function render() {
     const startY = camY - Math.floor(renderDistance / 2);
     
     for (let y = 0; y < renderDistance; ++y) {
-        const mapY = startY + y;
+        const tileY = startY + y;
 
-        if (mapY < 0 || mapY >= game.level.height) {
+        if (tileY < 0 || tileY >= game.level.height) {
             continue;
         }
 
         for (let x = 0; x < renderDistance; ++x) {
-            const mapX = startX + x;
+            const tileX = startX + x;
 
-            if (mapX < 0 || mapX >= game.level.width) {
+            if (tileX < 0 || tileX >= game.level.width) {
                 continue;
             }
 
-            const tile = mapY * game.level.width + mapX;
+            const tile = tileY * game.level.width + tileX;
             const tileId = game.level.tileIds[tile];
             const tileIndex = game.tiles.indices[tileId];
 
-            const worldX = mapX * 16;
-            const worldY = mapY * 16;
+            const pixelX = tileX * 16;
+            const pixelY = tileY * 16;
 
-            const screenX = (worldX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
-            const screenY = (worldY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
-
-            const padding = 1;
+            const screenX = (pixelX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
+            const screenY = (pixelY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
             
             game.ctx.imageSmoothingEnabled = false;
             game.ctx.drawImage(
@@ -85,6 +85,23 @@ function render() {
             );
         }
     }
+    
+    const tileY = game.player.selectedTileY;
+    const tileX = game.player.selectedTileX;
+
+    const pixelX = tileX * 16;
+    const pixelY = tileY * 16;
+
+    const screenX = (pixelX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
+    const screenY = (pixelY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
+
+    game.ctx.drawImage(
+        g_outline,
+        screenX, 
+        screenY, 
+        game.camera.zoom * 16 + padding, 
+        game.camera.zoom * 16 + padding
+    );
 }
 
 function generate() {

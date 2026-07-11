@@ -12,7 +12,9 @@ export function initPlayer() {
         spawn,
 
         x: 0,
-        y: 0
+        y: 0,
+        selectedTileX: 0,
+        selectedTileY: 0
     };
 }
 
@@ -35,17 +37,18 @@ export function update(deltaTime) {
         move(speed * deltaTime, 0);
     }
 
+    const pixelX = (game.input.mouseX - game.canvas.width / 2) / game.camera.zoom + game.camera.x;
+    const pixelY = (game.input.mouseY - game.canvas.height / 2) / game.camera.zoom + game.camera.y;
+
+    game.player.selectedTileX = Math.floor(pixelX / 16);
+    game.player.selectedTileY = Math.floor(pixelY / 16);
+
     if (game.input.isMouseDown()) {
-        // const randomX = random.getRandomInt(game.prng, 0, game.level.width);
-        // const randomY = random.getRandomInt(game.prng, 0, game.level.height);
-
-        const pixelX = (game.input.mouseX - game.canvas.width / 2) / game.camera.zoom + game.camera.x;
-        const pixelY = (game.input.mouseY - game.canvas.height / 2) / game.camera.zoom + game.camera.y;
-
-        const tileX = Math.floor(pixelX / 16)
-        const tileY = Math.floor(pixelY / 16)
-        
-        game.level.setTile(tileX, tileY, game.tiles.clay);
+        game.level.setTile(
+            game.player.selectedTileX,
+            game.player.selectedTileY,
+            game.tiles.clay
+        );
     }
 }
 
