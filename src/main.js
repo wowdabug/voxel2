@@ -5,6 +5,8 @@ import { initLevel } from "./level.js";
 import { initCamera } from "./camera.js";
 import { initPlayer } from "./player.js";
 
+import { debug } from "./lib/debug.js";
+
 export const game = {
     canvas: null,
     ctx: null,
@@ -69,10 +71,32 @@ function render() {
 function loop(currentTime) {
     const deltaTime = currentTime - g_lastTime;
     g_lastTime = currentTime;
+
+    const startPerf = performance.now();
     update(deltaTime);
     render();
+    const endPerf = performance.now();
+    frame(endPerf - startPerf)
+
     requestAnimationFrame(loop);
 }
+
+let g_frameTimeSum = 0;
+let g_frameTimeCount = 0;
+
+function frame(frameTime) {
+    g_frameTimeSum += frameTime;
+    ++g_frameTimeCount;
+
+    if (g_frameTimeCount >= 60) {
+        game.gui.frameTime = g_frameTimeSum / g_frameTimeCount;
+        game.gui.framesPerSecond = 1000 / game.gui.frameTime;
+
+        g_frameTimeSum = 0;
+        g_frameTimeCount = 0;
+    }
+}
+
 
 init();
 

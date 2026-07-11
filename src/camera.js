@@ -14,7 +14,7 @@ export function initCamera() {
 }
 
 function update(deltaTime) {
-    const speed = 0.001;
+    const speed = 0.005;
 
     moveCamera(
         (game.player.x - game.camera.x) * speed * deltaTime,
