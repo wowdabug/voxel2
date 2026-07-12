@@ -30,7 +30,14 @@ function move(a, amountX, amountY) {
     a.maxY += amountY;
 }
 
-// getMove
+function getMove(a, amountX, amountY) {
+    return {
+        minX: a.minX + amountX,
+        minY: a.minY + amountY,
+        maxX: a.maxX + amountX,
+        maxY: a.maxY + amountY
+    };
+}
 
 function getIntersection(a, b) {
     return {
@@ -79,7 +86,14 @@ function expand(a, amount) {
     a.maxY += amount
 }
 
-// getExpand
+function getExpand(a, amount) {
+    return {
+        minX: a.minX - amount,
+        minY: a.minY - amount,
+        maxX: a.maxX + amount,
+        maxY: a.maxY + amount
+    }; 
+}
 
 function inflate(a, amountX, amountY) {
     a.minX -= amountX,
@@ -88,7 +102,14 @@ function inflate(a, amountX, amountY) {
     a.maxY += amountY
 }
 
-// getInflate
+function getInflate(a, amountX, amountY) {
+    return {
+        minX: a.minX - amountX,
+        minY: a.minY - amountY,
+        maxX: a.maxX + amountX,
+        maxY: a.maxY + amountY
+    }; 
+}
 
 function getUnion(a, b) {
     return {
@@ -99,7 +120,12 @@ function getUnion(a, b) {
     };
 }
 
-// sweep
+function sweep(a, amountX, amountY) {
+    a.minX = Math.min(a.minX, a.minX + amountX);
+    a.minY = Math.min(a.minY, a.minY + amountY);
+    a.maxX = Math.max(a.maxX, a.maxX + amountX);
+    a.maxY = Math.max(a.maxY, a.maxY + amountY);
+}
 
 function getSweep(a, amountX, amountY) {
     return {

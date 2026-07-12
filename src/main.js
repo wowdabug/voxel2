@@ -8,9 +8,9 @@ import { initPlayer } from "./player.js";
 import { random } from "./lib/random.js";
 
 export const game = {
-    prng: null,
     canvas: null,
     ctx: null,
+    prng: null,
     gui: null,
     input: null,
     tiles: null,

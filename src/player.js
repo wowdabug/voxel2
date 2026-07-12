@@ -1,4 +1,5 @@
 import { game } from "./main.js";
+import { aabb } from "./lib/aabb.js";
 import { random } from "./lib/random.js";
 
 const g_entityMap = new Image();
@@ -13,8 +14,11 @@ export function initPlayer() {
 
         x: 0,
         y: 0,
+        w: 14,
+        h: 14,
+
         selectedTileX: 0,
-        selectedTileY: 0
+        selectedTileY: 0,
     };
 }
 
