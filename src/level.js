@@ -11,8 +11,8 @@ export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
     g_outline.src = "src/assets/outline.png";
 
-    const width = 16;
-    const height = 16;
+    const width = 64;
+    const height = 64;
 
     const area = width * height;
 
