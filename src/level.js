@@ -79,7 +79,7 @@ function render() {
             const tileIndexGround = game.tiles.indices[tileIdGround];
 
             // wip culling
-            if (tileIdGround == game.tiles.void) {
+            if (tileIdGround == game.tiles.void && tileIdBelow != game.tiles.void) {
                 game.ctx.imageSmoothingEnabled = false;
                 game.ctx.drawImage(
                     g_tileMap,
@@ -94,18 +94,20 @@ function render() {
                 );
             }
             
-            game.ctx.imageSmoothingEnabled = false;
-            game.ctx.drawImage(
-                g_tileMap,
-                (tileIndexGround % 16) * 16,
-                Math.floor(tileIndexGround / 16) * 16,
-                16,
-                16, 
-                screenX, 
-                screenY, 
-                game.camera.zoom * 16 + padding, 
-                game.camera.zoom * 16 + padding
-            );
+            if (tileIdGround != game.tiles.void) {
+                game.ctx.imageSmoothingEnabled = false;
+                game.ctx.drawImage(
+                    g_tileMap,
+                    (tileIndexGround % 16) * 16,
+                    Math.floor(tileIndexGround / 16) * 16,
+                    16,
+                    16, 
+                    screenX, 
+                    screenY, 
+                    game.camera.zoom * 16 + padding, 
+                    game.camera.zoom * 16 + padding
+                );
+            }
         }
     }
     
@@ -222,4 +224,8 @@ function setTile(x, y, id) {
     ) {
         game.level.tileIdsGround[x + (y * game.level.width)] = id;
     }
+}
+
+function getTilesInx() {
+    
 }
