@@ -7,9 +7,12 @@ let g_mouseDownOnce = false;
 export function initInput() {
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
-    window.addEventListener("mousedown", onMouseDown);
+    game.canvas.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
-    window.addEventListener("mousemove", onMouseMove);
+    game.canvas.addEventListener("mousemove", onMouseMove);
+    game.canvas.addEventListener("contextmenu", (event) => {
+        event.preventDefault(); 
+    });
 
     return {
         isKeyDown,
@@ -19,7 +22,12 @@ export function initInput() {
         
         keys: {},
         mouseX: 0,
-        mouseY: 0
+        mouseY: 0,
+
+        mouseButton: 0,
+        left: 0,
+        middle: 1,
+        right: 2
     };
 }
 
@@ -38,6 +46,7 @@ function onKeyUp(e) {
 function onMouseDown(e) {
     g_mouseDown = true;
     g_mouseDownOnce = true;
+    game.input.mouseButton = e.button;
 }
 
 function onMouseUp(e) {

@@ -44,10 +44,16 @@ export function update(deltaTime) {
     game.player.selectedTileY = Math.floor(pixelY / 16);
 
     if (game.input.isMouseDown()) {
+        let tileId;
+        if (game.input.mouseButton == game.input.left) {
+            tileId = game.tiles.wood;
+        } else if (game.input.mouseButton == game.input.right) {
+            tileId = game.tiles.void;
+        }
         game.level.setTile(
             game.player.selectedTileX,
             game.player.selectedTileY,
-            game.tiles.wood
+            tileId
         );
     }
 }
