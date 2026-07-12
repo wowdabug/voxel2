@@ -9,31 +9,36 @@ export function initTiles() {
         },
         {
             id: 1,
+            index: 0,
+            name: "void wall",
+        },
+        {
+            id: 2,
             index: 18,
             name: "stone",
         },
         {
-            id: 2,
+            id: 3,
             index: 4,
             name: "dirt",
         },
         {
-            id: 3,
+            id: 4,
             index: 1,
             name: "grass"
         },
         {
-            id: 4,
+            id: 5,
             index: 9,
             name: "sand"
         },
         {
-            id: 5,
+            id: 6,
             index: 10,
             name: "clay"
         },
         {
-            id: 6,
+            id: 7,
             index: 2,
             name: "wood"
         }
@@ -45,12 +50,13 @@ export function initTiles() {
 
     return {
         void: 0,
-        stone: 1,
-        dirt: 2,
-        grass: 3,
-        sand: 4,
-        clay: 5,
-        wood: 6,
+        voidWall: 1,
+        stone: 2,
+        dirt: 3,
+        grass: 4,
+        sand: 5,
+        clay: 6,
+        wood: 7,
 
         getIndex,
         getName,

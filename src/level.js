@@ -11,8 +11,8 @@ export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
     g_outline.src = "src/assets/outline.png";
 
-    const width = 64;
-    const height = 64;
+    const width = 16;
+    const height = 16;
 
     const area = width * height;
 
@@ -21,7 +21,9 @@ export function initLevel() {
         render,
         generate,
 
+        getTile,
         setTile,
+        getTiles,
 
         width,
         height,
@@ -194,9 +196,14 @@ function generateNoise() {
                 game.level.tileIdsGround[i] = game.tiles.stone;
             } else if (n > 0.4) {
                 game.level.tileIdsBelow[i] = game.tiles.grass;
+                game.level.tileIdsGround[i] = game.tiles.void;
+
             } else {
                 game.level.tileIdsBelow[i] = game.tiles.sand;
+                game.level.tileIdsGround[i] = game.tiles.void;
+                
             }
+            game.level.tileIdsAbove[i] = game.tiles.void;
             for (let j = 0; j < 5; ++j) {
                 const randomX = random.getRandomInt(prng, 0, game.level.width);
                 const randomY = random.getRandomInt(prng, 0, game.level.height);
@@ -206,26 +213,48 @@ function generateNoise() {
     }
 }
 
-function getTile(x, y, id) {
-    if (x >= 0 || 
-        x < game.level.width ||
-        y >= 0 ||
+function getTile(x, y) {
+    if (x >= 0 && 
+        x < game.level.width &&
+        y >= 0 &&
         y < game.level.height
     ) {
         return game.level.tileIdsGround[x + (y * game.level.width)];
-    }  
+    } else {
+        return game.tiles.voidWall;
+    }
 }
 
 function setTile(x, y, id) {
-    if (x >= 0 || 
-        x < game.level.width ||
-        y >= 0 ||
+    if (x >= 0 && 
+        x < game.level.width &&
+        y >= 0 &&
         y < game.level.height
     ) {
         game.level.tileIdsGround[x + (y * game.level.width)] = id;
     }
 }
 
-function getTilesInx() {
-    
+function getTiles(a) {
+    const minTileX = Math.floor(a.minX / 16);
+    const minTileY = Math.floor(a.minY / 16);
+    const maxTileX = Math.floor(a.maxX / 16);
+    const maxTileY = Math.floor(a.maxY / 16);
+
+    const tiles = [];
+
+    for (let y = minTileY; y <= maxTileY; ++y) {
+        for (let x = minTileX; x <= maxTileX; ++x) {
+            if (getTile(x, y) != game.tiles.void) {
+                tiles.push({
+                    minX: x * 16,
+                    minY: y * 16,
+                    maxX: (x + 1) * 16,
+                    maxY: (y + 1) * 16
+                });
+            }
+        }
+    }
+
+    return tiles;
 }

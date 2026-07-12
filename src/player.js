@@ -10,7 +10,10 @@ export function initPlayer() {
     return {
         update,
         render,
+
+        getBox,
         spawn,
+        move,
 
         x: 0,
         y: 0,
@@ -54,17 +57,27 @@ export function update(deltaTime) {
         } else if (game.input.mouseButton == game.input.right) {
             tileId = game.tiles.void;
         }
-        game.level.setTile(
-            game.player.selectedTileX,
-            game.player.selectedTileY,
-            tileId
+
+        const box = game.player.getBox();
+        const tile = aabb.getBox(
+            game.player.selectedTileX * 16,
+            game.player.selectedTileY * 16,
+            (game.player.selectedTileX * 16) + 16,
+            (game.player.selectedTileY * 16) + 16
         );
+        if (!aabb.intersects(box, tile)) {
+            game.level.setTile(
+                game.player.selectedTileX,
+                game.player.selectedTileY,
+                tileId
+            );
+        }
     }
 }
 
 export function render() {
-    const relativeX = game.player.x - game.camera.x - 8;
-    const relativeY = game.player.y - game.camera.y - 8;
+    const relativeX = (game.player.x - 1) - game.camera.x;
+    const relativeY = (game.player.y - 1) - game.camera.y;
 
     const id = 0;
     const padding = -1;
@@ -83,12 +96,72 @@ export function render() {
     );
 }
 
-function move(x, y) {
-    game.player.x += x;
-    game.player.y += y;
+function getBox() {
+    return aabb.getBox(
+        game.player.x,
+        game.player.y,
+        game.player.x + game.player.w,
+        game.player.y + game.player.h
+    );
 }
 
-function spawn(x, y) {
-    game.player.x = x;
-    game.player.y = y;
+function spawn() {
+    while (true) {
+        let tileX = random.getRandomInt(game.prng, 0, game.level.width);
+        let tileY = random.getRandomInt(game.prng, 0, game.level.height);
+
+        while (true) {
+            const tile = game.level.getTile(tileX, tileY)
+            if (tile == game.tiles.void) {
+                game.player.x = tileX * 16;
+                game.player.y = tileY * 16;
+                return;
+            }
+
+            if (tile == game.tiles.voidWall) {
+                break;
+            }
+
+            ++tileX;
+        }
+    }
+}
+
+function move(x, y) {
+    moveX(x);
+    moveY(y);
+}
+
+function moveX(x) {
+    game.player.x += x;
+
+    const box = game.player.getBox();
+    const tiles = game.level.getTiles(box);
+
+    for (const tile of tiles) {
+        if (aabb.intersects(box, tile)) {
+            if (x > 0) {
+                game.player.x = tile.minX - game.player.w;
+            } else {
+                game.player.x = tile.maxX;
+            }
+        }
+    }
+}
+
+function moveY(y) {
+    game.player.y += y;
+
+    const box = game.player.getBox();
+    const tiles = game.level.getTiles(box);
+
+    for (const tile of tiles) {
+        if (aabb.intersects(box, tile)) {
+            if (y > 0) {
+                game.player.y = tile.minY - game.player.h;
+            } else {
+                game.player.y = tile.maxY;
+            }
+        }
+    }
 }

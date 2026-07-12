@@ -35,7 +35,7 @@ function init() {
     game.camera = initCamera();
 
     game.level.generate();
-    game.player.spawn(256, 256);
+    game.player.spawn();
 
     const camX = random.getRandomInt(game.prng, 0, game.level.width * 16);
     const camY = random.getRandomInt(game.prng, 0, game.level.height * 16);
