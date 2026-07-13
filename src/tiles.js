@@ -1,52 +1,73 @@
 import { game } from "./main.js";
 
+function grassUpdate(layer, x, y) {
+    if (game.level.getTile(layer + 1, x, y) !== game.tiles.void) {
+        game.level.setTile(layer, x, y, game.tiles.dirt);
+    }
+}
+
 export function initTiles() {
     const tiles = [
         {
-            id: 0,
             index: 0,
             name: "void",
         },
         {
-            id: 1,
             index: 0,
             name: "void wall",
         },
         {
-            id: 2,
             index: 18,
             name: "stone",
         },
         {
-            id: 3,
             index: 4,
             name: "dirt",
         },
         {
-            id: 4,
             index: 1,
-            name: "grass"
+            name: "grass",
+            update: grassUpdate
         },
         {
-            id: 5,
             index: 9,
             name: "sand"
         },
         {
-            id: 6,
             index: 10,
             name: "clay"
         },
         {
-            id: 7,
             index: 2,
             name: "wood"
         }
     ];
 
-    const ids = tiles.map(x => x.id);
-    const indices = tiles.map(x => x.index);
-    const names = tiles.map(x => x.name);
+    const indices = [];
+    const names = [];
+
+    const addBehaviors = [];
+    const removeBehaviors = [];
+    const updateBehaviors = [];
+    const tickBehaviors = [];
+
+    const defaultIndex = 18;
+    const defaultName = "missingno";
+
+    const defaultAdd = (layer, x, y) => {}
+    const defaultRemove = (layer, x, y) => {}
+    const defaultUpdate = (layer, x, y) => {}
+    const defaultTick = (layer, x, y) => {}
+
+    for (let i = 0; i < tiles.length; ++i) {
+        indices[i] = tiles[i].index ?? defaultIndex;
+        names[i] = tiles[i].name ?? defaultName;
+        
+        addBehaviors[i] = tiles[i].add ?? defaultAdd;
+        removeBehaviors[i] = tiles[i].remove ?? defaultRemove;
+        updateBehaviors[i] = tiles[i].update ?? defaultUpdate;
+        tickBehaviors[i] = tiles[i].tick ?? defaultTick;
+    }
 
     return {
         void: 0,
@@ -57,24 +78,19 @@ export function initTiles() {
         sand: 5,
         clay: 6,
         wood: 7,
+        numberOfTiles: tiles.length,
 
-        getIndex,
-        getName,
         getIdsFromIndex,
         getIdsFromName,
 
-        ids,
         indices,
-        names
+        names,
+
+        addBehaviors,
+        removeBehaviors,
+        updateBehaviors,
+        tickBehaviors
     };
-}
-
-function getIndex(id) {
-    return game.tiles.indices[id];
-}
-
-function getName(id) {
-    return game.tiles.name[id];
 }
 
 function getIdsFromIndex(index) {

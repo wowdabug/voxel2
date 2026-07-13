@@ -1,7 +1,6 @@
 import { game } from "./main.js";
 import noise from "./lib/perlin.js";
 import { random } from "./lib/random.js";
-import {debug} from "./lib/debug.js";
 
 const g_tileMap = new Image();
 const g_outline = new Image();
@@ -17,13 +16,17 @@ export function initLevel() {
     const area = width * height;
 
     return {
+        below: 0,
+        ground: 1,
+        above: 2,
+
         update,
         render,
         generate,
 
         getTile,
         setTile,
-        getTiles,
+        getTileBoxes,
 
         width,
         height,
@@ -31,7 +34,7 @@ export function initLevel() {
 
         tileIdsBelow: new Uint8Array(area),
         tileIdsGround: new Uint8Array(area),
-        tileIdsAbove: new Uint8Array(area), // to implement
+        tileIdsAbove: new Uint8Array(area),
 
         seed: null
     };
@@ -80,7 +83,6 @@ function render() {
             const tileIdGround = game.level.tileIdsGround[tile];
             const tileIndexGround = game.tiles.indices[tileIdGround];
 
-            // wip culling
             if (tileIdGround == game.tiles.void && tileIdBelow != game.tiles.void) {
                 game.ctx.imageSmoothingEnabled = false;
                 game.ctx.drawImage(
@@ -163,13 +165,13 @@ function generate() {
 
 function generateVoid() {
     for (let i = 0; i < game.level.area; ++i) {
-        game.level.tileIds[i] = game.tiles.void;
+        game.level.tileIdsBelow[i] = game.tiles.void;
     }
 }
 
 function generateFlat() {
     for (let i = 0; i < game.level.area; ++i) {
-        game.level.tileIds[i] = game.tiles.grass;
+        game.level.tileIdsBelow[i] = game.tiles.grass;
     }
 }
 
@@ -177,7 +179,7 @@ function generateRandom() {
     const prng = random.getPrng(game.level.seed);
 
     for (let i = 0; i < game.level.area; ++i) {
-        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.ids.length);
+        game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.numberOfTiles);
     }
 }
 
@@ -213,29 +215,52 @@ function generateNoise() {
     }
 }
 
-function getTile(x, y) {
+function getTile(layer, x, y) {
     if (x >= 0 && 
         x < game.level.width &&
         y >= 0 &&
         y < game.level.height
     ) {
-        return game.level.tileIdsGround[x + (y * game.level.width)];
+        switch (layer) {
+            case game.level.below:
+                return game.level.tileIdsBelow[x + (y * game.level.width)];
+            case game.level.ground:
+                return game.level.tileIdsGround[x + (y * game.level.width)];
+            case game.level.above:
+                return game.level.tileIdsAbove[x + (y * game.level.width)];
+            default:
+                throw new Error("invalid layer provided");
+                break;
+        }
     } else {
         return game.tiles.voidWall;
     }
 }
 
-function setTile(x, y, id) {
+function setTile(layer, x, y, id) {
     if (x >= 0 && 
         x < game.level.width &&
         y >= 0 &&
         y < game.level.height
     ) {
-        game.level.tileIdsGround[x + (y * game.level.width)] = id;
+        switch (layer) {
+            case game.level.below:
+                game.level.tileIdsBelow[x + (y * game.level.width)] = id;
+                break;
+            case game.level.ground:
+                game.level.tileIdsGround[x + (y * game.level.width)] = id;
+                break;
+            case game.level.above:
+                game.level.tileIdsAbove[x + (y * game.level.width)] = id;
+                break;
+            default:
+                throw new Error("invalid layer provided");
+                break;
+        }
     }
 }
 
-function getTiles(a) {
+function getTileBoxes(layer, a) {
     const minTileX = Math.floor(a.minX / 16);
     const minTileY = Math.floor(a.minY / 16);
     const maxTileX = Math.floor(a.maxX / 16);
@@ -245,7 +270,7 @@ function getTiles(a) {
 
     for (let y = minTileY; y <= maxTileY; ++y) {
         for (let x = minTileX; x <= maxTileX; ++x) {
-            if (getTile(x, y) != game.tiles.void) {
+            if (getTile(layer, x, y) !== game.tiles.void) {
                 tiles.push({
                     minX: x * 16,
                     minY: y * 16,

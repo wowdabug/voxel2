@@ -67,6 +67,7 @@ export function update(deltaTime) {
         );
         if (!aabb.intersects(box, tile)) {
             game.level.setTile(
+                game.level.ground,
                 game.player.selectedTileX,
                 game.player.selectedTileY,
                 tileId
@@ -111,7 +112,7 @@ function spawn() {
         let tileY = random.getRandomInt(game.prng, 0, game.level.height);
 
         while (true) {
-            const tile = game.level.getTile(tileX, tileY)
+            const tile = game.level.getTile(game.level.ground, tileX, tileY)
             if (tile == game.tiles.void) {
                 game.player.x = tileX * 16;
                 game.player.y = tileY * 16;
@@ -136,7 +137,7 @@ function moveX(x) {
     game.player.x += x;
 
     const box = game.player.getBox();
-    const tiles = game.level.getTiles(box);
+    const tiles = game.level.getTileBoxes(game.level.ground, box);
 
     for (const tile of tiles) {
         if (aabb.intersects(box, tile)) {
@@ -153,7 +154,7 @@ function moveY(y) {
     game.player.y += y;
 
     const box = game.player.getBox();
-    const tiles = game.level.getTiles(box);
+    const tiles = game.level.getTileBoxes(game.level.ground, box);
 
     for (const tile of tiles) {
         if (aabb.intersects(box, tile)) {
