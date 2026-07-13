@@ -65,13 +65,28 @@ export function update(deltaTime) {
             (game.player.selectedTileX * 16) + 16,
             (game.player.selectedTileY * 16) + 16
         );
+
+        const level = game.level.ground;
+        const x = game.player.selectedTileX;
+        const y = game.player.selectedTileY;
         if (!aabb.intersects(box, tile)) {
+            game.tiles.removeBehaviors[game.level.getTile(level, x, y)](level, x, y);
+            
             game.level.setTile(
-                game.level.ground,
-                game.player.selectedTileX,
-                game.player.selectedTileY,
+                level,
+                x,
+                y,
                 tileId
             );
+            
+            game.tiles.addBehaviors[game.level.getTile(level, x, y)](level, x, y);
+
+            game.tiles.updateBehaviors[game.level.getTile(level, x - 1, y)](level, x - 1, y);
+            game.tiles.updateBehaviors[game.level.getTile(level, x + 1, y)](level, x + 1, y);
+            game.tiles.updateBehaviors[game.level.getTile(level, x, y - 1)](level, x, y - 1);
+            game.tiles.updateBehaviors[game.level.getTile(level, x, y + 1)](level, x, y + 1);
+            game.tiles.updateBehaviors[game.level.getTile(level - 1, x, y)](level - 1, x, y);
+            game.tiles.updateBehaviors[game.level.getTile(level + 1, x, y)](level + 1, x, y);
         }
     }
 }

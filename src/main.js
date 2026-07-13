@@ -68,8 +68,11 @@ function render() {
 
     game.ctx.clip();
 
-    game.level.render();
+    game.level.render(game.level.below);
+    game.level.render(game.level.ground);
+    game.level.renderOutline();
     game.player.render();
+    game.level.render(game.level.above);
 
     game.ctx.restore();
 

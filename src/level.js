@@ -10,17 +10,22 @@ export function initLevel() {
     g_tileMap.src = "src/assets/tiles.png";
     g_outline.src = "src/assets/outline.png";
 
+    const numberOfLayers = 3;
+
     const width = 64;
     const height = 64;
 
     const area = width * height;
+    const totalArea = numberOfLayers * area;
 
     return {
         below: 0,
         ground: 1,
         above: 2,
+        numberOfLayers,
 
         update,
+        renderOutline,
         render,
         generate,
 
@@ -30,11 +35,11 @@ export function initLevel() {
 
         width,
         height,
-        area,
 
-        tileIdsBelow: new Uint8Array(area),
-        tileIdsGround: new Uint8Array(area),
-        tileIdsAbove: new Uint8Array(area),
+        area,
+        totalArea,
+
+        tileIds: new Uint8Array(totalArea),
 
         seed: null
     };
@@ -44,9 +49,46 @@ function update() {
 
 }
 
-function render() {
+function renderTile(tileIndex, screenX, screenY) {
     const padding = 1;
-    
+
+    game.ctx.imageSmoothingEnabled = false;
+    game.ctx.drawImage(
+        g_tileMap,
+        (tileIndex % 16) * 16,
+        Math.floor(tileIndex / 16) * 16,
+        16,
+        16, 
+        screenX, 
+        screenY, 
+        game.camera.zoom * 16 + padding, 
+        game.camera.zoom * 16 + padding
+    );
+}
+
+function renderOutline() {
+    const padding = 1;
+
+    const tileY = game.player.selectedTileY;
+    const tileX = game.player.selectedTileX;
+
+    const pixelX = tileX * 16;
+    const pixelY = tileY * 16;
+
+    const screenX = (pixelX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
+    const screenY = (pixelY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
+
+    game.ctx.imageSmoothingEnabled = false;
+    game.ctx.drawImage(
+        g_outline,
+        screenX, 
+        screenY, 
+        game.camera.zoom * 16 + padding, 
+        game.camera.zoom * 16 + padding
+    );
+}
+
+function render(layer) {
     const renderDistance = game.camera.renderDistance;
 
     const camX = Math.round((game.camera.x + 1) / 16);
@@ -54,6 +96,13 @@ function render() {
 
     const startX = camX - Math.floor(renderDistance / 2);
     const startY = camY - Math.floor(renderDistance / 2);
+
+    const groundStart = game.level.area * game.level.ground;
+    const aboveStart = game.level.area * game.level.above;
+
+    const tileIds = game.level.tileIds;
+    const indices = game.tiles.indices;
+    const voidId = game.tiles.void;
     
     for (let y = 0; y < renderDistance; ++y) {
         const tileY = startY + y;
@@ -69,7 +118,7 @@ function render() {
                 continue;
             }
 
-            const tile = tileY * game.level.width + tileX;
+            const tile = (tileY * game.level.width) + tileX;
 
             const pixelX = tileX * 16;
             const pixelY = tileY * 16;
@@ -77,60 +126,25 @@ function render() {
             const screenX = (pixelX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
             const screenY = (pixelY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
             
-            const tileIdBelow = game.level.tileIdsBelow[tile];
-            const tileIndexBelow = game.tiles.indices[tileIdBelow];
-
-            const tileIdGround = game.level.tileIdsGround[tile];
-            const tileIndexGround = game.tiles.indices[tileIdGround];
-
-            if (tileIdGround == game.tiles.void && tileIdBelow != game.tiles.void) {
-                game.ctx.imageSmoothingEnabled = false;
-                game.ctx.drawImage(
-                    g_tileMap,
-                    (tileIndexBelow % 16) * 16,
-                    Math.floor(tileIndexBelow / 16) * 16,
-                    16,
-                    16, 
-                    screenX, 
-                    screenY, 
-                    game.camera.zoom * 16 + padding, 
-                    game.camera.zoom * 16 + padding
-                );
-            }
+            const tileIdBelow = tileIds[tile];
+            const tileIdGround = tileIds[groundStart + tile];
+            const tileIdAbove = tileIds[aboveStart + tile];
             
-            if (tileIdGround != game.tiles.void) {
-                game.ctx.imageSmoothingEnabled = false;
-                game.ctx.drawImage(
-                    g_tileMap,
-                    (tileIndexGround % 16) * 16,
-                    Math.floor(tileIndexGround / 16) * 16,
-                    16,
-                    16, 
-                    screenX, 
-                    screenY, 
-                    game.camera.zoom * 16 + padding, 
-                    game.camera.zoom * 16 + padding
-                );
+            if (layer == game.level.below) {
+                if (tileIdBelow !== voidId && tileIdGround == voidId && tileIdAbove == voidId) {
+                    renderTile(indices[tileIdBelow], screenX, screenY);
+                }
+            } else if (layer == game.level.ground) {
+                if (tileIdGround !== voidId && tileIdAbove == voidId) {
+                    renderTile(indices[tileIdGround], screenX, screenY);
+                }
+            } else {
+                if (tileIdAbove !== voidId) {
+                    renderTile(indices[tileIdAbove], screenX, screenY);
+                }
             }
         }
     }
-    
-    const tileY = game.player.selectedTileY;
-    const tileX = game.player.selectedTileX;
-
-    const pixelX = tileX * 16;
-    const pixelY = tileY * 16;
-
-    const screenX = (pixelX - game.camera.x) * game.camera.zoom + (game.canvas.width / 2);
-    const screenY = (pixelY - game.camera.y) * game.camera.zoom + (game.canvas.height / 2);
-
-    game.ctx.drawImage(
-        g_outline,
-        screenX, 
-        screenY, 
-        game.camera.zoom * 16 + padding, 
-        game.camera.zoom * 16 + padding
-    );
 }
 
 function generate() {
@@ -164,21 +178,31 @@ function generate() {
 }
 
 function generateVoid() {
-    for (let i = 0; i < game.level.area; ++i) {
-        game.level.tileIdsBelow[i] = game.tiles.void;
+    for (let i = 0; i < game.level.totalArea; ++i) {
+        game.level.tileIds[i] = game.tiles.void;
     }
 }
 
 function generateFlat() {
-    for (let i = 0; i < game.level.area; ++i) {
-        game.level.tileIdsBelow[i] = game.tiles.grass;
+    let i = 0;
+    for (let j = 0; j < game.level.area; ++j) {
+        game.level.tileIds[i] = game.tiles.grass;
+        ++i;
+    }
+    for (let j = 0; j < game.level.area; ++j) {
+        game.level.tileIds[i] = game.tiles.void;
+        ++i;
+    }
+    for (let j = 0; j < game.level.area; ++j) {
+        game.level.tileIds[i] = game.tiles.void;
+        ++i;
     }
 }
 
 function generateRandom() {
     const prng = random.getPrng(game.level.seed);
 
-    for (let i = 0; i < game.level.area; ++i) {
+    for (let i = 0; i < game.level.totalArea; ++i) {
         game.level.tileIds[i] = random.getRandomInt(prng, 0, game.tiles.numberOfTiles);
     }
 }
@@ -189,29 +213,33 @@ function generateNoise() {
 
     noise.seed(game.level.seed);
 
+    const groundStart = game.level.area * game.level.ground;
+    const aboveStart = game.level.area * game.level.above;
+
     let i = 0;
     for (let y = 0; y < game.level.height; ++y) {
         for (let x = 0; x < game.level.width; ++x) {
             const n = (noise.perlin2(x * scale, y * scale) + 1) / 2;
             if (n > 0.6) {
-                game.level.tileIdsBelow[i] = game.tiles.dirt;
-                game.level.tileIdsGround[i] = game.tiles.stone;
+                game.level.tileIds[i] = game.tiles.dirt;
+                game.level.tileIds[groundStart + i] = game.tiles.stone;
             } else if (n > 0.4) {
-                game.level.tileIdsBelow[i] = game.tiles.grass;
-                game.level.tileIdsGround[i] = game.tiles.void;
-
+                game.level.tileIds[i] = game.tiles.grass;
+                game.level.tileIds[groundStart + i] = game.tiles.void;
             } else {
-                game.level.tileIdsBelow[i] = game.tiles.sand;
-                game.level.tileIdsGround[i] = game.tiles.void;
-                
+                game.level.tileIds[i] = game.tiles.sand;
+                game.level.tileIds[groundStart + i] = game.tiles.void;
             }
-            game.level.tileIdsAbove[i] = game.tiles.void;
             for (let j = 0; j < 5; ++j) {
                 const randomX = random.getRandomInt(prng, 0, game.level.width);
                 const randomY = random.getRandomInt(prng, 0, game.level.height);
             }
             ++i;
         }
+    }
+
+    for (let j = aboveStart; j < game.level.totalArea; ++j) {
+        game.level.tileIds[j] = game.tiles.void;
     }
 }
 
@@ -221,17 +249,7 @@ function getTile(layer, x, y) {
         y >= 0 &&
         y < game.level.height
     ) {
-        switch (layer) {
-            case game.level.below:
-                return game.level.tileIdsBelow[x + (y * game.level.width)];
-            case game.level.ground:
-                return game.level.tileIdsGround[x + (y * game.level.width)];
-            case game.level.above:
-                return game.level.tileIdsAbove[x + (y * game.level.width)];
-            default:
-                throw new Error("invalid layer provided");
-                break;
-        }
+        return game.level.tileIds[(layer * game.level.area) + (y * game.level.width) + x];
     } else {
         return game.tiles.voidWall;
     }
@@ -243,20 +261,7 @@ function setTile(layer, x, y, id) {
         y >= 0 &&
         y < game.level.height
     ) {
-        switch (layer) {
-            case game.level.below:
-                game.level.tileIdsBelow[x + (y * game.level.width)] = id;
-                break;
-            case game.level.ground:
-                game.level.tileIdsGround[x + (y * game.level.width)] = id;
-                break;
-            case game.level.above:
-                game.level.tileIdsAbove[x + (y * game.level.width)] = id;
-                break;
-            default:
-                throw new Error("invalid layer provided");
-                break;
-        }
+        game.level.tileIds[(layer * game.level.area) + (y * game.level.width) + x] = id;
     }
 }
 
