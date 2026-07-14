@@ -101,8 +101,10 @@ function render(layer) {
     const aboveStart = game.level.area * game.level.above;
 
     const tileIds = game.level.tileIds;
-    const indices = game.tiles.indices;
     const voidId = game.tiles.void;
+
+    const indices = game.tiles.indices;
+    const opaque = game.tiles.opaque;
     
     for (let y = 0; y < renderDistance; ++y) {
         const tileY = startY + y;
@@ -131,11 +133,11 @@ function render(layer) {
             const tileIdAbove = tileIds[aboveStart + tile];
             
             if (layer == game.level.below) {
-                if (tileIdBelow !== voidId && tileIdGround == voidId && tileIdAbove == voidId) {
+                if (tileIdBelow !== voidId && !opaque[tileIdGround] && !opaque[tileIdAbove]) {
                     renderTile(indices[tileIdBelow], screenX, screenY);
                 }
             } else if (layer == game.level.ground) {
-                if (tileIdGround !== voidId && tileIdAbove == voidId) {
+                if (tileIdGround !== voidId && !opaque[tileIdAbove]) {
                     renderTile(indices[tileIdGround], screenX, screenY);
                 }
             } else {
@@ -209,15 +211,33 @@ function generateRandom() {
 
 function generateTree(x, y) {
     const height = 5;
-    if (game.level.getTile(game.level.ground, x, y) == game.tiles.void) {
-        game.level.setTile(game.level.ground, x, y, game.tiles.trunk);
-        for (let i = 1; i < height; ++i) {
-            game.level.setTile(game.level.ground, x, y - i, game.tiles.log);
+    let canGenerate = true;
+
+    if (game.level.getTile(game.level.ground, x, y) !== game.tiles.void) {
+        canGenerate = false;
+    }
+
+    for (let i = 0; i < height; ++i) {
+        if (game.level.getTile(game.level.above, x, y - i) !== game.tiles.void) {
+            canGenerate = false;
         }
+    }
+
+    if (canGenerate) {
+        game.level.setTile(game.level.ground, x, y, game.tiles.trunk);
+        
+        for (let i = 0; i < height - 2; ++i) {
+            game.level.setTile(game.level.above, x, y - i, game.tiles.log);
+        }
+
         for (let i = -1; i < 2; ++i) {
-            for (let j = -1; j < 2; ++j) {
+            for (let j = 0; j < 3; ++j) {
                 game.level.setTile(game.level.above, x + i, y + j - height, game.tiles.leaves);
             }
+        }
+
+        for (let i = height - 2; i < height; ++i) {
+            game.level.setTile(game.level.above, x, y - i, game.tiles.branches);
         }
     }
 }
@@ -256,7 +276,7 @@ function generateNoise() {
     const clayCount = 16;
     // TODO
 
-    const treeCount = 32;
+    const treeCount = 16;
     for (let j = 0; j < treeCount; ++j) {
         generateTree(
             random.getRandomInt(prng, 0, game.level.width),

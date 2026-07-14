@@ -6,12 +6,27 @@ function grassUpdate(layer, x, y) {
     }
 }
 
+function trunkRemove(layer, x, y) {
+    const height = 5;
+    if (layer == game.level.ground) {
+        if (game.level.getTile(game.level.above, x, y) == game.tiles.log) {
+            for (let i = 0; i < height - 2; ++i) {
+                game.level.setTile(game.level.above, x, y - i, game.tiles.void);
+            }
+            for (let i = height - 2; i < height; ++i) {
+                game.level.setTile(game.level.above, x, y - i, game.tiles.leaves);
+            }
+        }
+    }
+}
+
 export function initTiles() {
     const tiles = [
         {
             index: 0,
             name: "void",
-            solid: false
+            solid: false,
+            opaque: false
         },
         {
             index: 0,
@@ -44,22 +59,29 @@ export function initTiles() {
         },
         {
             index: 34,
-            name: "trunk"
+            name: "trunk",
+            remove: trunkRemove
         },
         {
             index: 35,
-            name: "log",
-            solid: false
+            name: "log"
         },
         {
-            index: 8,
-            name: "leaves"
+            index: 36,
+            name: "branches"
+        },
+        {
+            index: 37,
+            name: "leaves",
+            solid: false,
+            opaque: false
         }
     ];
 
     const indices = [];
     const names = [];
     const solid = [];
+    const opaque = [];
 
     const addBehaviors = [];
     const removeBehaviors = [];
@@ -69,6 +91,7 @@ export function initTiles() {
     const defaultIndex = 18;
     const defaultName = "missingno";
     const defaultSolid = true;
+    const defaultOpaque = true;
 
     const defaultAdd = (layer, x, y) => {}
     const defaultRemove = (layer, x, y) => {}
@@ -79,6 +102,7 @@ export function initTiles() {
         indices[i] = tiles[i].index ?? defaultIndex;
         names[i] = tiles[i].name ?? defaultName;
         solid[i] = tiles[i].solid ?? defaultSolid;
+        opaque[i] = tiles[i].opaque ?? defaultOpaque;
         
         addBehaviors[i] = tiles[i].add ?? defaultAdd;
         removeBehaviors[i] = tiles[i].remove ?? defaultRemove;
@@ -97,7 +121,8 @@ export function initTiles() {
         wood: 7,
         trunk: 8,
         log: 9,
-        leaves: 10,
+        branches: 10,
+        leaves: 11,
         numberOfTiles: tiles.length,
 
         getIdsFromIndex,
@@ -106,6 +131,7 @@ export function initTiles() {
         indices,
         names,
         solid,
+        opaque,
 
         addBehaviors,
         removeBehaviors,
