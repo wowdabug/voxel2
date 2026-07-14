@@ -11,18 +11,19 @@ export function initTiles() {
         {
             index: 0,
             name: "void",
+            solid: false
         },
         {
             index: 0,
-            name: "void wall",
+            name: "void wall"
         },
         {
             index: 18,
-            name: "stone",
+            name: "stone"
         },
         {
             index: 4,
-            name: "dirt",
+            name: "dirt"
         },
         {
             index: 1,
@@ -40,11 +41,25 @@ export function initTiles() {
         {
             index: 2,
             name: "wood"
+        },
+        {
+            index: 34,
+            name: "trunk"
+        },
+        {
+            index: 35,
+            name: "log",
+            solid: false
+        },
+        {
+            index: 8,
+            name: "leaves"
         }
     ];
 
     const indices = [];
     const names = [];
+    const solid = [];
 
     const addBehaviors = [];
     const removeBehaviors = [];
@@ -53,6 +68,7 @@ export function initTiles() {
 
     const defaultIndex = 18;
     const defaultName = "missingno";
+    const defaultSolid = true;
 
     const defaultAdd = (layer, x, y) => {}
     const defaultRemove = (layer, x, y) => {}
@@ -62,6 +78,7 @@ export function initTiles() {
     for (let i = 0; i < tiles.length; ++i) {
         indices[i] = tiles[i].index ?? defaultIndex;
         names[i] = tiles[i].name ?? defaultName;
+        solid[i] = tiles[i].solid ?? defaultSolid;
         
         addBehaviors[i] = tiles[i].add ?? defaultAdd;
         removeBehaviors[i] = tiles[i].remove ?? defaultRemove;
@@ -78,6 +95,9 @@ export function initTiles() {
         sand: 5,
         clay: 6,
         wood: 7,
+        trunk: 8,
+        log: 9,
+        leaves: 10,
         numberOfTiles: tiles.length,
 
         getIdsFromIndex,
@@ -85,6 +105,7 @@ export function initTiles() {
 
         indices,
         names,
+        solid,
 
         addBehaviors,
         removeBehaviors,
