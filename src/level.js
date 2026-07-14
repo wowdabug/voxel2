@@ -50,8 +50,6 @@ function update() {
 }
 
 function renderTile(tileIndex, screenX, screenY) {
-    const padding = 1;
-
     game.ctx.imageSmoothingEnabled = false;
     game.ctx.drawImage(
         g_tileMap,
@@ -59,10 +57,10 @@ function renderTile(tileIndex, screenX, screenY) {
         Math.floor(tileIndex / 16) * 16,
         16,
         16, 
-        screenX, 
-        screenY, 
-        game.camera.zoom * 16 + padding, 
-        game.camera.zoom * 16 + padding
+        Math.floor(screenX), 
+        Math.floor(screenY), 
+        Math.floor(game.camera.zoom * 16), 
+        Math.floor(game.camera.zoom * 16)
     );
 }
 
@@ -209,6 +207,12 @@ function generateRandom() {
     }
 }
 
+function generateClay(x, y) {
+    if (game.level.getTile(game.level.below, x, y) == game.tiles.sand) {
+        game.level.setTile(game.level.below, x, y, game.tiles.clay);
+    }  
+}
+
 function generateTree(x, y) {
     const height = 5;
     let canGenerate = true;
@@ -225,7 +229,7 @@ function generateTree(x, y) {
 
     if (canGenerate) {
         game.level.setTile(game.level.ground, x, y, game.tiles.trunk);
-        
+
         for (let i = 0; i < height - 2; ++i) {
             game.level.setTile(game.level.above, x, y - i, game.tiles.log);
         }
@@ -261,9 +265,12 @@ function generateNoise() {
             } else if (n > 0.4) {
                 game.level.tileIds[i] = game.tiles.grass;
                 game.level.tileIds[groundStart + i] = game.tiles.void;
-            } else {
+            } else if (n > 0.3) {
                 game.level.tileIds[i] = game.tiles.sand;
                 game.level.tileIds[groundStart + i] = game.tiles.void;
+            } else {
+                game.level.tileIds[i] = game.tiles.sand;
+                game.level.tileIds[groundStart + i] = game.tiles.water;
             }
             ++i;
         }
@@ -274,7 +281,12 @@ function generateNoise() {
     }
 
     const clayCount = 16;
-    // TODO
+    for (let j = 0; j < clayCount; ++j) {
+        generateClay(
+            random.getRandomInt(prng, 0, game.level.width),
+            random.getRandomInt(prng, 0, game.level.height)
+        );
+    }
 
     const treeCount = 16;
     for (let j = 0; j < treeCount; ++j) {

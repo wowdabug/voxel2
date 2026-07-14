@@ -37,20 +37,24 @@ export function initTiles() {
             name: "stone"
         },
         {
-            index: 4,
+            index: 49,
             name: "dirt"
         },
         {
-            index: 1,
+            index: 50,
+            name: "mud"
+        },
+        {
+            index: 48,
             name: "grass",
             update: grassUpdate
         },
         {
-            index: 9,
+            index: 51,
             name: "sand"
         },
         {
-            index: 10,
+            index: 52,
             name: "clay"
         },
         {
@@ -77,6 +81,12 @@ export function initTiles() {
         {
             index: 37,
             name: "leaves",
+            solid: false,
+            opaque: false
+        },
+        {
+            index: 64,
+            name: "water",
             solid: false,
             opaque: false
         }
@@ -119,15 +129,17 @@ export function initTiles() {
         voidWall: 1,
         stone: 2,
         dirt: 3,
-        grass: 4,
-        sand: 5,
-        clay: 6,
-        planks: 7,
-        wood: 8,
-        trunk: 9,
-        log: 10,
-        branches: 11,
-        leaves: 12,
+        mud: 4,
+        grass: 5,
+        sand: 6,
+        clay: 7,
+        planks: 8,
+        wood: 9,
+        trunk: 10,
+        log: 11,
+        branches: 12,
+        leaves: 13,
+        water: 14,
         numberOfTiles: tiles.length,
 
         getIdsFromIndex,
