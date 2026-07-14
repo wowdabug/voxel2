@@ -53,9 +53,9 @@ export function update(deltaTime) {
     if (game.input.isMouseDown()) {
         let tileId;
         if (game.input.mouseButton == game.input.left) {
-            tileId = game.tiles.trunk;
-        } else if (game.input.mouseButton == game.input.right) {
             tileId = game.tiles.void;
+        } else if (game.input.mouseButton == game.input.right) {
+            tileId = game.tiles.planks;
         }
 
         const box = game.player.getBox();

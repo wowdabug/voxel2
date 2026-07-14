@@ -54,7 +54,11 @@ export function initTiles() {
             name: "clay"
         },
         {
-            index: 2,
+            index: 32,
+            name: "planks"
+        },
+        {
+            index: 33,
             name: "wood"
         },
         {
@@ -118,11 +122,12 @@ export function initTiles() {
         grass: 4,
         sand: 5,
         clay: 6,
-        wood: 7,
-        trunk: 8,
-        log: 9,
-        branches: 10,
-        leaves: 11,
+        planks: 7,
+        wood: 8,
+        trunk: 9,
+        log: 10,
+        branches: 11,
+        leaves: 12,
         numberOfTiles: tiles.length,
 
         getIdsFromIndex,
