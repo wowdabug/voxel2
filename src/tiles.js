@@ -20,6 +20,15 @@ function trunkRemove(layer, x, y) {
     }
 }
 
+function decayRandomTick(layer, x, y) {
+    game.level.setTile(
+        layer,
+        x,
+        y,
+        game.tiles.void
+    );
+}
+
 export function initTiles() {
     const tiles = [
         {
@@ -76,13 +85,15 @@ export function initTiles() {
         },
         {
             index: 36,
-            name: "branches"
+            name: "branches",
+            randomTick: decayRandomTick
         },
         {
             index: 37,
             name: "leaves",
             solid: false,
-            opaque: false
+            opaque: false,
+            randomTick: decayRandomTick
         },
         {
             index: 64,
@@ -101,6 +112,7 @@ export function initTiles() {
     const removeBehaviors = [];
     const updateBehaviors = [];
     const tickBehaviors = [];
+    const randomTickBehaviors = [];
 
     const defaultIndex = 18;
     const defaultName = "missingno";
@@ -111,6 +123,7 @@ export function initTiles() {
     const defaultRemove = (layer, x, y) => {}
     const defaultUpdate = (layer, x, y) => {}
     const defaultTick = (layer, x, y) => {}
+    const defaultRandomTick = (layer, x, y) => {}
 
     for (let i = 0; i < tiles.length; ++i) {
         indices[i] = tiles[i].index ?? defaultIndex;
@@ -122,6 +135,7 @@ export function initTiles() {
         removeBehaviors[i] = tiles[i].remove ?? defaultRemove;
         updateBehaviors[i] = tiles[i].update ?? defaultUpdate;
         tickBehaviors[i] = tiles[i].tick ?? defaultTick;
+        randomTickBehaviors[i] = tiles[i].randomTick ?? defaultRandomTick;
     }
 
     return {

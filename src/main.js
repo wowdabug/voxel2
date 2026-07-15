@@ -11,6 +11,7 @@ export const game = {
     canvas: null,
     ctx: null,
     prng: null,
+    tick: null,
     gui: null,
     input: null,
     tiles: null,
@@ -26,6 +27,7 @@ function init() {
     game.ctx = canvas.getContext("2d");
 
     game.prng = random.getPrng();
+    game.tick = 0;
 
     game.gui = initGui();
     game.input = initInput();
@@ -43,6 +45,8 @@ function init() {
 }
 
 function update(deltaTime) {
+    ++game.tick;
+
     game.level.update();
     game.camera.update(deltaTime);
     game.player.update(deltaTime);

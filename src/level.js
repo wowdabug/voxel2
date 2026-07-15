@@ -4,6 +4,9 @@ import { random } from "./lib/random.js";
 
 const g_tileMap = new Image();
 const g_outline = new Image();
+
+const g_queue = [];
+
 const g_prng = random.getPrng();
 
 export function initLevel() {
@@ -46,7 +49,41 @@ export function initLevel() {
 }
 
 function update() {
+}
 
+function tick() {
+    for (let i = 0; i < g_queue.length; ++i) {
+        if (g_queue[i].tick <= game.tick) {
+            const level = g_queue[i].level;
+            const x = g_queue[i].x;
+            const y = g_queue[i].y;
+
+            const tileId = getTile(level, x, y);
+
+            game.tiles.tickBehavior[tileId](
+                level,
+                x,
+                y
+            );
+
+            g_queue[i] = g_queue[g_queue.length - 1];
+            g_queue.pop();
+        }
+    }
+
+    const randomTickRate = 1;
+    for (let i = 0; i < randomTickRate; ++i) {
+        const level = random.getRandomInt(game.prng, 0, game.level.numberOfLayers);
+        const x = random.getRandomInt(game.prng, 0, game.level.width);
+        const y = random.getRandomInt(game.prng, 0, game.level.height);
+
+        const tileId = getTile(level, x, y);
+        game.tiles.randomTickBehavior[tileId](
+            level,
+            x,
+            y
+        );
+    }
 }
 
 function renderTile(tileIndex, screenX, screenY) {
@@ -145,6 +182,15 @@ function render(layer) {
             }
         }
     }
+}
+
+function scheduleTick(layer, x, y, tick) {
+    g_queue.push({
+        layer,
+        x,
+        y,
+        tick
+    });
 }
 
 function generate() {
